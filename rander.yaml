@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: bikecare-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    region: oregon
+    plan: free
+    healthCheckPath: /api/
+    envVars:
+      - key: SECRET_KEY
+        value: django-insecure-5pk5-li-4-dz-giey-l8-wt-uu-b-l4ayaa-r8qjs-b
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: ${RENDER_EXTERNAL_HOSTNAME}
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://bikecare.netlify.app,https://${RENDER_EXTERNAL_HOSTNAME}
+
+  - type: web
+    name: bikecare-frontend
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm install -g serve && serve -s build -l 3000
+    region: oregon
+    plan: free
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://bikecare-backend.onrender.com/api
