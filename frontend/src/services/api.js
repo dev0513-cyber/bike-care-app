@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 // API Configuration
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+// Use relative path to proxy through nginx
+const API_BASE_URL = '/api';
 
 // Create axios instance with default configuration
 const api = axios.create({
@@ -11,6 +12,9 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Add base URL logging for debugging
+console.log('API Base URL configured as:', API_BASE_URL);
 
 // Add request interceptor to handle authentication token
 api.interceptors.request.use(

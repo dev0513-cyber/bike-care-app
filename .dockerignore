@@ -1,0 +1,16 @@
+# Exclude local node_modules (Docker installs its own)
+frontend/node_modules
+frontend/venv
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Exclude git and IDE files
+.git
+.gitignore
+
+# Exclude backend Python cache
+backend/__pycache__
+backend/**/__pycache__
+backend/**/*.pyc

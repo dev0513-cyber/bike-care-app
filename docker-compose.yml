@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Django Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bikecare_backend
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=django-super-secret-key-change-in-production
+      - ALLOWED_HOSTS=localhost,127.0.0.1,backend
+      - DOCKER_ENV=1
+    volumes:
+      - sqlite_data:/app/data
+    expose:
+      - "8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn bikecare.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    restart: unless-stopped
+
+  # React Frontend (served via Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bikecare_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:

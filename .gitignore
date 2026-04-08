@@ -1,17 +1,43 @@
-# Create .gitignore
-@"
 # Python
-backend/venv/
-backend/__pycache__/
-backend/*.pyc
-backend/db.sqlite3
-
-# Node
-node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
 build/
+.venv
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+/staticfiles/
+/media/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
 
 # Environment
 .env
 .env.local
-.env.production
-"@ | Out-File -FilePath ".gitignore" -Encoding utf8
+.env.*.local
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+
+# Build
+/frontend/build
+/frontend/.cache

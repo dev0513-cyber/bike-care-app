@@ -59,7 +59,7 @@ class UserLoginSerializer(serializers.Serializer):
 
 class AdminLoginSerializer(serializers.Serializer):
     """Serializer for admin login with role validation"""
-    email = serializers.EmailField()
+    email = serializers.CharField()  # Can be email or username
     password = serializers.CharField()
 
     def validate(self, attrs):
@@ -67,14 +67,25 @@ class AdminLoginSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
+            # Try to authenticate with email first, then username
             user = authenticate(username=email, password=password)
+            if not user:
+                # If email doesn't work, try using it as username
+                from django.contrib.auth.models import User
+                try:
+                    user_obj = User.objects.get(email=email)
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    user = None
+            
             if not user:
                 raise serializers.ValidationError('Invalid email or password')
             if not user.is_active:
                 raise serializers.ValidationError('User account is disabled')
 
-            # Check if user has admin role
-            if not hasattr(user, 'profile') or not user.profile.is_admin:
+            # Check if user has admin role or is superuser
+            is_admin = user.is_superuser or (hasattr(user, 'profile') and user.profile.role == 'admin')
+            if not is_admin:
                 raise serializers.ValidationError('Access denied. Admin privileges required.')
 
             attrs['user'] = user

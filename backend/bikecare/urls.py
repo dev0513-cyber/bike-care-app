@@ -16,8 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def api_root(request):
+    return Response({'message': 'Bikecare API is running', 'version': '1.0'})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', api_root, name='api_root'),
     path('api/', include('api.urls')),
 ]
